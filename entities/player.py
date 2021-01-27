@@ -1,9 +1,7 @@
-from math import *
-
+from config import *
+from engine import *
 from entities.base_entity import Entity
 from entities.spells import *
-from engine import *
-from config import *
 
 
 class Player(Entity):
@@ -259,8 +257,6 @@ class Player(Entity):
 
         # Обновление прицела
         self.scope.update(new_scope_x, new_scope_y)
-        
-        self.wand.update()
 
     def shoot(self, type, enemies_group):
         args = (self.wand.rect.centerx, self.wand.rect.y,
@@ -274,12 +270,15 @@ class Player(Entity):
             FlashSpell(*args)
         elif type == 'poison':
             PoisonSpell(*args)
+        elif type == 'void':
+            VoidSpell(*args)
 
 
 class PlayerWand(pygame.sprite.Sprite):
     """
     Класс представляющий оружие игрока - волшебную палочку
     """
+
     def __init__(self, *args):
         super().__init__(*args)
 
@@ -288,12 +287,12 @@ class PlayerWand(pygame.sprite.Sprite):
         self.original_image = self.image
         self.rect = self.image.get_rect()
 
-    def update(self, player_position: tuple =None, player_scope_position: tuple =None):
+    def update(self, player_position: tuple = None, player_scope_position: tuple = None):
         # Если были переданны координаты прицела, то обновляем угол
         if player_scope_position and player_position:
             # Получение угла относительно прицела и оружия
             angle = degrees(atan2(self.rect.centery - player_scope_position[1],
-            self.rect.centerx - player_scope_position[0]))
+                                  self.rect.centerx - player_scope_position[0]))
             self.rotate_wand(player_position, angle)
 
     def rotate_wand(self, player_position: tuple, angle: float) -> None:
